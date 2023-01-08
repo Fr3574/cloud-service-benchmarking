@@ -13,13 +13,15 @@ import (
 func main() {
 	// Get the SUT
 	sut := flag.String("sut", "tempo", "Defines the SUT (Jaeger or Tempo)")
+	traceLength := flag.Float64("trace_length", 1.0, "Defines the length of a trace")
+	min := flag.Int("min", 30, "Defines the minutes of how long to run the tracer")
 	flag.Parse()
 
 	l := log.New(os.Stdout, "", 0)
 
 	tp, err := load.InitProvider(*sut)
 	if err != nil {
-		log.Fatal(err)
+		l.Fatal(err)
 	}
 
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
@@ -27,10 +29,10 @@ func main() {
 
 	defer func() {
 		if err := tp.Shutdown(ctx); err != nil {
-			log.Fatal("failed to shutdown TracerProvider: %w", err)
+			l.Fatal("failed to shutdown TracerProvider: %w", err)
 		}
 	}()
-	c := load.SetBenchmarkConfig(50)
+	c := load.SetBenchmarkConfig(*min, *traceLength)
 
 	spanner := load.NewSpanner(tp, c, l)
 	spanner.Run()

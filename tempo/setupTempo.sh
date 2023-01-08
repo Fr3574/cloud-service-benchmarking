@@ -32,9 +32,18 @@ docker run --rm \
     --name tempo \
     grafana/tempo:latest "-config.file=/etc/tempo.yaml"
 
+echo "Starting monitor container"
+docker run --rm \
+    --net=cloud-service-benchmarking_default \
+    -d \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -v $PWD/output:/app/output \
+    --name monitor \
+    monitor:latest "-output=output_tempo.csv"
+
 echo "Starting benchmark container"
 docker run --rm \
     --net=cloud-service-benchmarking_default \
     -d \
     --name benchmark \
-    benchmark:latest "-sut=tempo"
+    benchmark:latest "-sut=tempo" "-trace_length=0.0001"

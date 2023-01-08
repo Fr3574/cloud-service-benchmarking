@@ -49,9 +49,18 @@ docker run --name jaeger -d \
 
 sleep 10
 
+echo "Starting monitor container"
+docker run --rm \
+    --net=elastic-jaeger \
+    -d \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -v $PWD/output:/app/output \
+    --name monitor \
+    monitor:latest "-output=output_jaeger.csv"
+
 echo "Starting benchmark container"
 docker run --rm \
     -d \
     --net=elastic-jaeger \
     --name benchmark \
-    benchmark:latest "-sut=jaeger"
+    benchmark:latest "-sut=jaeger" "-trace_length=0.0001"

@@ -7,7 +7,8 @@ import (
 )
 
 type BenchmarkConfig struct {
-	spanAmount int
+	min         int
+	traceLength float64
 }
 
 type Spanner struct {

@@ -105,6 +105,6 @@ func initGrafana() (*sdktrace.TracerProvider, error) {
 
 }
 
-func SetBenchmarkConfig(spanAmount int) BenchmarkConfig {
-	return BenchmarkConfig{spanAmount: 50}
+func SetBenchmarkConfig(min int, traceLength float64) BenchmarkConfig {
+	return BenchmarkConfig{min: min, traceLength: traceLength}
 }
