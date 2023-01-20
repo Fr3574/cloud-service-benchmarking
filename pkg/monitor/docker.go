@@ -21,8 +21,8 @@ func GetSUT(containers []types.Container) (*types.Container, error) {
 }
 
 // Create a new Docker client
-func CreateDockerClient() (*client.Client, error) {
-	cli, err := client.NewClientWithOpts(client.FromEnv)
+func CreateDockerClient(sut string) (*client.Client, error) {
+	cli, err := client.NewClient("http://"+sut+":2375", "", nil, nil)
 	if err != nil {
 		return nil, err
 	}

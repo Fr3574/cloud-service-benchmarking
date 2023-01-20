@@ -1,3 +1,7 @@
 tempo/tempo-data
 tempo/gcs-data
 *.csv
+*.json
+.*
+*.tfstate
+*.tfstate.backup

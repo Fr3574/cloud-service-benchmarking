@@ -12,12 +12,13 @@ import (
 
 func main() {
 	// Define the flags
+	sut := flag.String("sut", "tempo", "Defines the SUT (Jaeger or Tempo)")
 	outputFileName := flag.String("output", "output.csv", "Defines the name of the output file")
 	monitoringInterval := flag.Int("monitoring_interval", 10, "Defines the interval to monitor the SUT")
 	min := flag.Int("min", 5, "Defines the minutes of how long to run the monitoring")
 	flag.Parse()
 
-	cli, err := monitor.CreateDockerClient()
+	cli, err := monitor.CreateDockerClient(*sut)
 	if err != nil {
 		log.Fatal(err)
 	}

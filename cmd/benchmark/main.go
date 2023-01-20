@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	// Get the SUT
+	// Define the flags
 	sut := flag.String("sut", "tempo", "Defines the SUT (Jaeger or Tempo)")
 	traceLength := flag.Float64("trace_length", 1.0, "Defines the length of a trace")
 	min := flag.Int("min", 30, "Defines the minutes of how long to run the tracer")
