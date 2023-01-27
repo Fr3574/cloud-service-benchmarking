@@ -68,8 +68,12 @@ func GetData(cli *client.Client, ctx context.Context, container types.Container)
 	netOutStr := fmt.Sprintf("%.2fMB", float64(netStats.TxBytes)/float64(1024*1024))
 
 	// Calculate the block I/O
-	blockReadStr := fmt.Sprintf("%.2fMB", float64(s.BlkioStats.IoServiceBytesRecursive[0].Value)/float64(1024*1024))
-	blockWriteStr := fmt.Sprintf("%.2fMB", float64(s.BlkioStats.IoServiceBytesRecursive[1].Value)/float64(1024*1024))
+	blockReadStr := "N/A"
+	blockWriteStr := "N/A"
+	if len(s.BlkioStats.IoServiceBytesRecursive) > 1 {
+		blockReadStr = fmt.Sprintf("%.2fMB", float64(s.BlkioStats.IoServiceBytesRecursive[0].Value)/float64(1024*1024))
+		blockWriteStr = fmt.Sprintf("%.2fMB", float64(s.BlkioStats.IoServiceBytesRecursive[1].Value)/float64(1024*1024))
+	}
 
 	// Calculate the number of processes
 	pidsStr := fmt.Sprintf("%d", s.PidsStats.Current)
