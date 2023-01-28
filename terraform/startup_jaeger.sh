@@ -22,15 +22,25 @@ systemctl start docker
 # Restart docker (don't ask me why this works)
 systemctl restart docker
 
-# Get sample config 
-curl -O https://raw.githubusercontent.com/grafana/tempo/main/example/docker-compose/gcs/tempo-gcs.yaml
-echo "Start Grafana tempo ..."
-docker run --rm \
-    --net=host \
-    -d \
-    -v $PWD/tempo-gcs.yaml:/etc/tempo.yaml \
-    -v $PWD/tempo-data:/tmp/tempo \
-    -p 3200:3200 \
-    --name tempo \
-    grafana/tempo:latest "-config.file=/etc/tempo.yaml"
-echo "Container started on port 3200"
+echo "Start Jaeger ..."
+docker run --name jaeger -d \
+    --restart on-failure \
+    --net bridge \
+    -e COLLECTOR_OTLP_ENABLED=true \
+    -p 6831:6831/udp \
+    -p 6832:6832/udp \
+    -p 5778:5778 \
+    -p 16686:16686 \
+    -p 4317:4317 \
+    -p 4318:4318 \
+    -p 14250:14250 \
+    -p 14268:14268 \
+    -p 14269:14269 \
+    -p 9411:9411 \
+    -e no_proxy=localhost \
+    -e SPAN_STORAGE_TYPE=elasticsearch \
+    -e ES_SERVER_URLS=http://elasticsearch:9200 \
+    -e ES_NUM_SHARDS=1 \
+    -e ES_NUM_REPLICAS=0 \
+    jaegertracing/all-in-one:1.40
+echo "Container started"

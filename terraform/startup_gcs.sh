@@ -14,7 +14,7 @@ apt install -y -q docker-ce
 systemctl start docker
 echo "Start fake-gcs-server ..."	
 docker run -d \
-    --net=host \
+    --net bridge \
     --restart on-failure \
     -v $PWD/gcs-data/:/data/tempo/ \
     -p 4443:4443 \

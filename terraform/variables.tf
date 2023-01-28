@@ -1,0 +1,3 @@
+variable "sut" {
+  type = string
+}

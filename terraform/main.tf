@@ -8,25 +8,7 @@ provider "google" {
 
 #####################################################
 
-
-# Create two containers, one for the "sut" VM and one for the "database" VM
-# resource "docker_container" "container_sut" {
-#   network_alias = "container_sut"
-#   network {
-#     name = docker_network.mynetwork.name
-#   }
-# }
-
-# resource "docker_container" "container_database" {
-#   ...
-#   network_alias = "container_database"
-#   network {
-#     name = docker_network.mynetwork.name
-#   }
-#   ...
-# }
-
-# Allow traffic between VMs and containers
+# Allow traffic between VMs
 resource "google_compute_firewall" "allow_traffic" {
   name = "allow-traffic"
   network = "default"
@@ -64,7 +46,7 @@ resource "google_compute_instance" "client" {
 }
 
 resource "google_compute_instance" "sut" {
-  name         = "tempo"
+  name         = var.sut
   machine_type = "e2-standard-2"
   boot_disk {
     initialize_params {
@@ -80,12 +62,12 @@ resource "google_compute_instance" "sut" {
     }
   }
   metadata = {
-    startup-script = "${file("startup_sut.sh")}"
+    startup-script = "${file("startup_${var.sut}.sh")}"
   }
 }
 
 resource "google_compute_instance" "database" {
-  name = "gcs"
+  name = var.sut == "jaeger" ? "elasticsearch" : "gcs"
   machine_type = "e2-standard-4"
   boot_disk {
     initialize_params {
@@ -101,8 +83,6 @@ resource "google_compute_instance" "database" {
     }
   }
   metadata = {
-    startup-script = "${file("startup_database.sh")}"
+    startup-script = "${file("startup_${var.sut == "jaeger" ? "elasticsearch" : "gcs"}.sh")}"
   }
 }
-
-

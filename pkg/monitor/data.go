@@ -50,9 +50,7 @@ func GetData(cli *client.Client, ctx context.Context, container types.Container)
 	cpuDelta := float64(s.CPUStats.CPUUsage.TotalUsage) - float64(s.PreCPUStats.CPUUsage.TotalUsage)
 	systemDelta := float64(s.CPUStats.SystemUsage) - float64(s.PreCPUStats.SystemUsage)
 	resultCpuUsage := cpuDelta / systemDelta * float64(s.CPUStats.OnlineCPUs) * 100.0
-	// cpuUsage := float64(s.CPUStats.CPUUsage.TotalUsage) / float64(s.CPUStats.SystemUsage) * 100.0
 	cpuUsageStr := fmt.Sprintf("%.2f", resultCpuUsage)
-	// fmt.Printf("CPU%: %.2f%%\n", cpuUsage)
 
 	// Calculate the memory usage
 	memoryUsage := float64(s.MemoryStats.Usage) / float64(1024*1024) // convert bytes to MB
@@ -63,17 +61,28 @@ func GetData(cli *client.Client, ctx context.Context, container types.Container)
 	memoryPercentStr := fmt.Sprintf("%d%%", memoryPercent)
 
 	// Calculate the network I/O
-	netStats := s.Networks["eth0"]
-	netInStr := fmt.Sprintf("%.2fMB", float64(netStats.RxBytes)/float64(1024*1024))
-	netOutStr := fmt.Sprintf("%.2fMB", float64(netStats.TxBytes)/float64(1024*1024))
+	var netIn, netOut float64
+	// Iterate over the stats.Networks map
+	for _, v := range s.Networks {
+		netIn += float64(v.RxBytes)
+		netOut += float64(v.TxBytes)
+	}
+	netInStr := fmt.Sprintf("%.2fMB", netIn/float64(1024*1024))
+	netOutStr := fmt.Sprintf("%.2fMB", netOut/float64(1024*1024))
 
 	// Calculate the block I/O
-	blockReadStr := "N/A"
-	blockWriteStr := "N/A"
-	if len(s.BlkioStats.IoServiceBytesRecursive) > 1 {
-		blockReadStr = fmt.Sprintf("%.2fMB", float64(s.BlkioStats.IoServiceBytesRecursive[0].Value)/float64(1024*1024))
-		blockWriteStr = fmt.Sprintf("%.2fMB", float64(s.BlkioStats.IoServiceBytesRecursive[1].Value)/float64(1024*1024))
+	var ioReadBytes, ioWriteBytes float64
+	// Iterate over the stats.BlkioStats.IoServiceBytesRecursive slice
+	for _, v := range s.BlkioStats.IoServiceBytesRecursive {
+		switch v.Op {
+		case "Read":
+			ioReadBytes += float64(v.Value)
+		case "Write":
+			ioWriteBytes += float64(v.Value)
+		}
 	}
+	blockReadStr := fmt.Sprintf("%.2fMB", ioReadBytes/float64(1024*1024))
+	blockWriteStr := fmt.Sprintf("%.2fMB", ioReadBytes/float64(1024*1024))
 
 	// Calculate the number of processes
 	pidsStr := fmt.Sprintf("%d", s.PidsStats.Current)
