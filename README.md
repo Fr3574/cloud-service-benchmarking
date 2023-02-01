@@ -2,12 +2,12 @@
 
 ## Setup the System (choose either a jaeger or tempo)
 ```
-terraform -chdir=terraform/ apply -var sut=<jaeger|tempo>
+terraform -chdir=terraform/ apply -var sut=<"jaeger"|"tempo">
 ```
 
 ## Run the benchmark
 ```
-./scripts/runBenchmark.sh <jaeger|tempo>
+./scripts/runBenchmark.sh <"jaeger"|"tempo"> <"horizontal"|"vertical"> <incrementInterval int (only for vertical scaling)> <incrementPercentage int (only for vertical scaling)>
 ```
 
 ## Stop the benchmark
@@ -17,10 +17,10 @@ terraform -chdir=terraform/ apply -var sut=<jaeger|tempo>
 
 ## Download the data
 ```
-./scripts/downloadStats.sh <jaeger|tempo>
+./scripts/downloadStats.sh <"jaeger"|"tempo">
 ```
 
 ## Clean up the resources
 ```
-terraform -chdir=terraform/ destroy -var sut=<jaeger|tempo>
+terraform -chdir=terraform/ destroy -var sut=<"jaeger"|"tempo">
 ```

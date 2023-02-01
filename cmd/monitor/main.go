@@ -15,7 +15,6 @@ func main() {
 	sut := flag.String("sut", "tempo", "Defines the SUT (Jaeger or Tempo)")
 	outputFileName := flag.String("output", "output.csv", "Defines the name of the output file")
 	monitoringInterval := flag.Int("monitoring_interval", 10, "Defines the interval to monitor the SUT")
-	min := flag.Int("min", 5, "Defines the minutes of how long to run the monitoring")
 	flag.Parse()
 
 	cli, err := monitor.CreateDockerClient(*sut)
@@ -51,19 +50,8 @@ func main() {
 	}
 	log.Printf("Got a docker container with id %s", container.ID)
 
-	// Get the current time
-	startTime := time.Now()
-
-	// Run the loop for a certain amount of minutes
-	duration := time.Duration(*min) * time.Minute
-
 	log.Println("Running the monitoring ...")
 	for {
-		// Check the elapsed time
-		elapsedTime := time.Since(startTime)
-		if elapsedTime >= duration {
-			break
-		}
 
 		data, err := monitor.GetData(cli, context.Background(), *container)
 		if err != nil {
@@ -74,5 +62,4 @@ func main() {
 		}
 		time.Sleep(time.Duration(*monitoringInterval) * time.Second)
 	}
-	log.Println("Finished the monitoring")
 }

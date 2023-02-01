@@ -64,11 +64,6 @@ func initGrafana() (*sdktrace.TracerProvider, error) {
 		return nil, fmt.Errorf("failed to create resource: %w", err)
 	}
 
-	// If the OpenTelemetry Collector is running on a local cluster (minikube or
-	// microk8s), it should be accessible through the NodePort service at the
-	// `localhost:30080` endpoint. Otherwise, replace `localhost` with the
-	// endpoint of your cluster. If you run the app inside k8s, then you can
-	// probably connect directly to the service through dns.
 	ctx, cancel := context.WithTimeout(ctx, time.Second)
 	defer cancel()
 
@@ -105,6 +100,11 @@ func initGrafana() (*sdktrace.TracerProvider, error) {
 
 }
 
-func SetBenchmarkConfig(min int, traceLength float64) BenchmarkConfig {
-	return BenchmarkConfig{min: min, traceLength: traceLength}
+func SetBenchmarkConfig(mode string, traceLength float64, incrementInterval float64, incrementPercentage float64) BenchmarkConfig {
+	return BenchmarkConfig{
+		mode:                mode,
+		traceLength:         traceLength,
+		incrementInterval:   incrementInterval,
+		incrementPercentage: incrementPercentage,
+	}
 }
