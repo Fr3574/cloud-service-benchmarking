@@ -43,6 +43,7 @@ gcloud compute ssh $clientInstanceName --zone europe-west3-c -- $cmd
 echo "Done."
 
 if [ $mode == "horizontal" ]; then
+    echo "Starting benchmark containers"
     cmd="nohup bash /cloud-service-benchmarking/scripts/runHorizontalBenchmark.sh ${sut} ${incrementInterval} &"
     gcloud compute ssh $clientInstanceName --zone europe-west3-c -- $cmd
 elif [ $mode == "vertical" ]; then
