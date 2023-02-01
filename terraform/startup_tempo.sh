@@ -25,7 +25,7 @@ systemctl restart docker
 # Get sample config 
 curl -O https://raw.githubusercontent.com/grafana/tempo/main/example/docker-compose/gcs/tempo-gcs.yaml
 echo "Start Grafana tempo ..."
-docker run --rm \
+docker run --restart on-failure \
     --net bridge \
     -d \
     -v $PWD/tempo-gcs.yaml:/etc/tempo.yaml \

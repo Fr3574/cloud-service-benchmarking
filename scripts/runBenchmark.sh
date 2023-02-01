@@ -43,8 +43,8 @@ gcloud compute ssh $clientInstanceName --zone europe-west3-c -- $cmd
 echo "Done."
 
 if [ $mode == "horizontal" ]; then
-    gcloud compute ssh $clientInstanceName --zone europe-west3-c -- "./cloud-service-benchmarking/scripts/runHorizontalBenchmark.sh ${sut} ${incrementInterval}"
-    echo "Benchmark is finished."
+    cmd="nohup bash /cloud-service-benchmarking/scripts/runHorizontalBenchmark.sh ${sut} ${incrementInterval} &"
+    gcloud compute ssh $clientInstanceName --zone europe-west3-c -- $cmd
 elif [ $mode == "vertical" ]; then
     echo "Starting benchmark container"
     cmd="sudo docker run --rm \
@@ -55,12 +55,13 @@ elif [ $mode == "vertical" ]; then
         benchmark:latest '-sut=${sut}' '-mode=${mode}' '-trace_length=1' '-increment_interval=${incrementInterval}' '-increment_percentage=${incrementPercentage}'"
     echo $cmd
     gcloud compute ssh $clientInstanceName --zone europe-west3-c -- $cmd
-    sleep 1800
-    echo "Benchmark is finished."
 else 
     echo "${mode} is a unkown mode. It has to be either 'horizontal' or 'vertical'"
     exit 1
 fi
+sleep 1800
+echo "Benchmark is finished."
+
 
 echo "Removing benchmark containers"
 cmd="sudo docker rm $(docker ps -a | grep "benchmark" | awk '{print $1}')"
