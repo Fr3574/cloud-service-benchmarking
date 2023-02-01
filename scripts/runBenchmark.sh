@@ -14,15 +14,22 @@ else
     exit 1
 fi
 
+echo "Waiting for the sut to become ready ..."
+
 # Connect to the sut VM and check if the container is running
 while ! gcloud compute ssh $sut --zone europe-west3-c --command "sudo docker container list" | grep -q $sut; do
     sleep 5
-done
+done > /dev/null 2>&1
 
 # Connect to the database VM and check if the container is running
 while ! gcloud compute ssh $database --zone europe-west3-c --command "sudo docker container list" | grep -q $database; do
     sleep 5
-done
+done > /dev/null 2>&1
+
+# Connect to the client VM and check if the images are installed
+while ! gcloud compute ssh $clientInstanceName --zone europe-west3-c --command "sudo docker images" | grep -q "monitor"; do
+    sleep 5
+done > /dev/null 2>&1
 
 echo "Starting monitor container"
 cmd="sudo docker run --rm \
@@ -36,22 +43,7 @@ gcloud compute ssh $clientInstanceName --zone europe-west3-c -- $cmd
 echo "Done."
 
 if [ $mode == "horizontal" ]; then
-    counter=0
-    end_time=$(( $(date +%s) + 1800 )) # 30min from now on
-    echo "read, number_containers" >> output_${sut}_benchmark.csv
-    while [[ $(date +%s) -lt $end_time ]]; do
-        counter=$((counter + 1))
-        echo "Starting benchmark container benchmark_${counter}"
-        cmd="sudo docker run --rm \
-            --net bridge \
-            -d \
-            --name benchmark_${counter} \
-            benchmark:latest '-sut=${sut}' '-mode=${mode}' '-trace_length=1'"
-        gcloud compute ssh $clientInstanceName --zone europe-west3-c -- $cmd
-        # Write one line to the CSV file after each iteration
-        echo "$(date +'%Y-%m-%d %H:%M:%S.%N %z %Z'), $counter" >> output_${sut}_benchmark.csv
-        sleep $incrementInterval
-    done
+    gcloud compute ssh $clientInstanceName --zone europe-west3-c -- "./cloud-service-benchmarking/scripts/runHorizontalBenchmark.sh ${sut} ${incrementInterval}"
     echo "Benchmark is finished."
 elif [ $mode == "vertical" ]; then
     echo "Starting benchmark container"

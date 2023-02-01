@@ -7,7 +7,7 @@ terraform -chdir=terraform/ apply -var sut=<"jaeger"|"tempo">
 
 ## Run the benchmark
 ```
-./scripts/runBenchmark.sh <"jaeger"|"tempo"> <"horizontal"|"vertical"> <incrementInterval int (only for vertical scaling)> <incrementPercentage int (only for vertical scaling)>
+./scripts/runBenchmark.sh <"jaeger"|"tempo"> <"horizontal"|"vertical"> <incrementInterval int> <incrementPercentage int (only for vertical scaling)>
 ```
 
 ## Stop the benchmark

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 clientInstanceName="client"
 sut=$1
+mode=$2
 filename=output_${sut}.csv
 benchmark_filename=output_${sut}_benchmark.csv
 
