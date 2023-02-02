@@ -2,8 +2,17 @@
 clientInstanceName="client"
 sut=$1
 mode=$2
-incrementInterval=$3
-incrementPercentage=$4
+traceLength=$3
+incrementInterval=$4
+incrementPercentage=$5
+
+echo "SUT: ${sut}"
+echo "Mode of scaling: ${mode}"
+echo "Length of Traces: ${traceLength}s"
+echo "Increment interval: ${incrementInterval}s"
+if [ $mode == "vertical" ]; then
+    echo "Increment Percentage: ${incrementPercentage}" 
+fi
 
 if [ $sut == "tempo" ]; then
     database="gcs"
@@ -44,7 +53,8 @@ echo "Done."
 
 if [ $mode == "horizontal" ]; then
     echo "Starting benchmark containers"
-    cmd="nohup bash /cloud-service-benchmarking/scripts/runHorizontalBenchmark.sh ${sut} ${incrementInterval} &"
+    cmd="bash /cloud-service-benchmarking/scripts/runHorizontalBenchmark.sh ${sut} ${traceLength} ${incrementInterval}"
+    echo $cmd
     gcloud compute ssh $clientInstanceName --zone europe-west3-c -- $cmd
 elif [ $mode == "vertical" ]; then
     echo "Starting benchmark container"
@@ -53,14 +63,14 @@ elif [ $mode == "vertical" ]; then
         -d \
         -v $PWD/benchmark_output:/app/benchmark_output \
         --name benchmark \
-        benchmark:latest '-sut=${sut}' '-mode=${mode}' '-trace_length=1' '-increment_interval=${incrementInterval}' '-increment_percentage=${incrementPercentage}'"
+        benchmark:latest '-sut=${sut}' '-mode=${mode}' '-trace_length=${traceLength}' '-increment_interval=${incrementInterval}' '-increment_percentage=${incrementPercentage}'"
     echo $cmd
     gcloud compute ssh $clientInstanceName --zone europe-west3-c -- $cmd
+    sleep 1800
 else 
     echo "${mode} is a unkown mode. It has to be either 'horizontal' or 'vertical'"
     exit 1
 fi
-sleep 1800
 echo "Benchmark is finished."
 
 
