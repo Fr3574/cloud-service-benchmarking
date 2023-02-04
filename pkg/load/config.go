@@ -40,7 +40,7 @@ func initJaeger() (*sdktrace.TracerProvider, error) {
 		// Record information about this application in a Resource.
 		sdktrace.WithResource(resource.NewWithAttributes(
 			semconv.SchemaURL,
-			semconv.ServiceNameKey.String(service),
+			semconv.ServiceNameKey.String(service+time.Now().String()),
 		)),
 	)
 
