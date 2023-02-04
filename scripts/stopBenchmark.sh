@@ -2,7 +2,7 @@
 clientInstanceName="client"
 
 echo "Removing benchmark containers"
-cmd="sudo docker rm -f \$(sudo docker ps -aq --filter ancestor=benchmark:latest)"
+cmd="sudo docker rm -f \$(sudo docker ps -aq)"
 echo $cmd
-gcloud compute ssh $clientInstanceName --zone europe-west3-c --command $cmd
+gcloud compute ssh $clientInstanceName --zone europe-west3-c -- $cmd
 echo "Done."

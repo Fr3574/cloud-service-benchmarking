@@ -40,6 +40,8 @@ while ! gcloud compute ssh $clientInstanceName --zone europe-west3-c --command "
     sleep 5
 done > /dev/null 2>&1
 
+echo "SUT is ready"
+
 echo "Starting monitor container"
 cmd="sudo docker run --rm \
     --net bridge \
@@ -75,7 +77,7 @@ echo "Benchmark is finished."
 
 
 echo "Removing benchmark containers"
-cmd="sudo docker rm $(docker ps -a | grep "benchmark" | awk '{print $1}')"
+cmd="sudo docker rm -f \$(sudo docker ps -aq)"
 echo $cmd
 gcloud compute ssh $clientInstanceName --zone europe-west3-c -- $cmd
 echo "Done."

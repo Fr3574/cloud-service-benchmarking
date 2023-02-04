@@ -24,7 +24,7 @@ func (s *Spanner) createTrace(name string) {
 	_, span := s.tp.Tracer("test").Start(context.Background(), name)
 	defer span.End()
 
-	time.Sleep(time.Duration(s.config.traceLength) * time.Second)
+	time.Sleep(time.Duration(s.config.traceLength * float64(time.Second)))
 }
 
 // Runs the spanner in the horizontal mode
