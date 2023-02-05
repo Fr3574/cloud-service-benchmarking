@@ -21,6 +21,7 @@ func NewSpanner(tp *sdktrace.TracerProvider, c BenchmarkConfig, sut string) *Spa
 
 // Creates a Trace
 func (s *Spanner) createTrace(name string) {
+	log.Println("Trace is sent")
 	// Each execution of the run loop, we should get a new "root" span and context.
 	_, span := s.tp.Tracer("test").Start(context.Background(), name)
 	defer span.End()
@@ -43,8 +44,13 @@ func (s *Spanner) runVertical() error {
 	traceCounter := 1
 	sleepInterval := s.config.incrementInterval / float64(traceCounter)
 
+	containerName, err := getContainerName()
+	if err != nil {
+		return err
+	}
+
 	// Open a new CSV file
-	f, err := os.Create(fmt.Sprintf("benchmark_output/output_%s_benchmark.csv", s.sut))
+	f, err := os.Create(fmt.Sprintf("benchmark_output/output_%s_%s.csv", s.sut, *containerName))
 	if err != nil {
 		return err
 	}
