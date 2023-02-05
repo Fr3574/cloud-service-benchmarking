@@ -16,7 +16,7 @@ func main() {
 	mode := flag.String("mode", "horizontal", "")
 	traceLength := flag.Float64("trace_length", 1.0, "Defines the length of a trace in seconds")
 	incrementInterval := flag.Float64("increment_interval", 1.0, "")
-	name := flag.String("mode", "benchmark", "The name of the container")
+	name := flag.String("container_name", "benchmark", "The name of the container")
 	flag.Parse()
 
 	tp, err := load.InitProvider(*sut)

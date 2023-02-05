@@ -56,14 +56,10 @@ if [ $mode == "horizontal" ]; then
     gcloud compute ssh $clientInstanceName --zone europe-west3-c -- $cmd
 elif [ $mode == "vertical" ]; then
     echo "Starting benchmark container"
-    cmd="sudo docker run --rm \
-        --net bridge \
-        -d \
-        -v $PWD/benchmark_output:/app/benchmark_output \
-        --name benchmark \
-        benchmark:latest '-sut=${sut}' '-mode=${mode}' '-trace_length=${traceLength}' '-increment_interval=${incrementInterval}'"
+    cmd="bash /cloud-service-benchmarking/scripts/runVerticalBenchmark.sh ${sut} ${traceLength} ${incrementInterval}"
     echo $cmd
     gcloud compute ssh $clientInstanceName --zone europe-west3-c -- $cmd
+    echo "Running the benchmark for 30min"
     sleep 1800
 else 
     echo "${mode} is a unkown mode. It has to be either 'horizontal' or 'vertical'"
