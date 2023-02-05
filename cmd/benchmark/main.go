@@ -15,8 +15,7 @@ func main() {
 	sut := flag.String("sut", "tempo", "Defines the SUT (Jaeger or Tempo)")
 	mode := flag.String("mode", "horizontal", "")
 	traceLength := flag.Float64("trace_length", 1.0, "Defines the length of a trace in seconds")
-	incrementInterval := flag.Float64("increment_interval", 60.0, "")
-	incrementPercentage := flag.Float64("increment_percentage", 5.0, "")
+	incrementInterval := flag.Float64("increment_interval", 1.0, "")
 	flag.Parse()
 
 	tp, err := load.InitProvider(*sut)
@@ -32,7 +31,7 @@ func main() {
 			log.Fatal("failed to shutdown TracerProvider: %w", err)
 		}
 	}()
-	c := load.SetBenchmarkConfig(*mode, *traceLength, *incrementInterval, *incrementPercentage)
+	c := load.SetBenchmarkConfig(*mode, *traceLength, *incrementInterval)
 
 	log.Println("Spanner is initializing ...")
 	spanner := load.NewSpanner(tp, c, *sut)

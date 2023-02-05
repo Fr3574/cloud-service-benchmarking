@@ -33,7 +33,6 @@ func (s *Spanner) runHorizontal() error {
 	traceNumber := 0
 	for {
 		s.createTrace(fmt.Sprintf("%d", traceNumber))
-		log.Println("Trace generated")
 		traceNumber++
 	}
 }
@@ -41,8 +40,7 @@ func (s *Spanner) runHorizontal() error {
 // Runs the spanner in the vertical mode
 func (s *Spanner) runVertical() error {
 	traceNumber := 0
-	interval := s.config.traceLength
-	counter := 0.0
+	traceCounter := 1
 
 	// Open a new CSV file
 	f, err := os.Create(fmt.Sprintf("benchmark_output/output_%s_benchmark", s.sut))
@@ -52,24 +50,21 @@ func (s *Spanner) runVertical() error {
 	defer f.Close()
 
 	// Write the header
-	if err = writeHeader(f, []string{"read", "trace_interval"}); err != nil {
+	if err = writeHeader(f, []string{"read", "traces"}); err != nil {
 		return err
 	}
 
 	for {
-		go s.createTrace(fmt.Sprintf("%d", traceNumber))
-		traceNumber++
-		time.Sleep(time.Duration(interval * float64(time.Second)))
-		counter += interval
-		if counter >= s.config.incrementInterval {
-			interval = interval * (1 - s.config.incrementPercentage/100)
-			log.Printf("Interval is increased to %.2f\n", interval)
-			counter = 0.0
-			// Write the row
-			if err = writeData(f, []string{time.Now().String(), fmt.Sprintf("%.3f", interval)}); err != nil {
-				return err
-			}
+		for i := 1; i <= traceCounter; i++ {
+			go s.createTrace(fmt.Sprintf("%d", traceNumber))
+			traceNumber++
 		}
+		time.Sleep(time.Duration(s.config.incrementInterval * float64(time.Second)))
+		traceCounter++
+		if err = writeData(f, []string{time.Now().String(), fmt.Sprintf("%d", traceCounter)}); err != nil {
+			return err
+		}
+		log.Printf("Traces sent parallel: %d\n", traceCounter)
 	}
 }
 

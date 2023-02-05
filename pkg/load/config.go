@@ -100,11 +100,10 @@ func initGrafana() (*sdktrace.TracerProvider, error) {
 
 }
 
-func SetBenchmarkConfig(mode string, traceLength float64, incrementInterval float64, incrementPercentage float64) BenchmarkConfig {
+func SetBenchmarkConfig(mode string, traceLength float64, incrementInterval float64) BenchmarkConfig {
 	return BenchmarkConfig{
-		mode:                mode,
-		traceLength:         traceLength,
-		incrementInterval:   incrementInterval,
-		incrementPercentage: incrementPercentage,
+		mode:              mode,
+		traceLength:       traceLength,
+		incrementInterval: incrementInterval,
 	}
 }

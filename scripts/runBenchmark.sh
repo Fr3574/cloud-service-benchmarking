@@ -4,15 +4,11 @@ sut=$1
 mode=$2
 traceLength=$3
 incrementInterval=$4
-incrementPercentage=$5
 
 echo "SUT: ${sut}"
 echo "Mode of scaling: ${mode}"
 echo "Length of Traces: ${traceLength}s"
 echo "Increment interval: ${incrementInterval}s"
-if [ $mode == "vertical" ]; then
-    echo "Increment Percentage: ${incrementPercentage}%" 
-fi
 
 if [ $sut == "tempo" ]; then
     database="gcs"
@@ -65,7 +61,7 @@ elif [ $mode == "vertical" ]; then
         -d \
         -v $PWD/benchmark_output:/app/benchmark_output \
         --name benchmark \
-        benchmark:latest '-sut=${sut}' '-mode=${mode}' '-trace_length=${traceLength}' '-increment_interval=${incrementInterval}' '-increment_percentage=${incrementPercentage}'"
+        benchmark:latest '-sut=${sut}' '-mode=${mode}' '-trace_length=${traceLength}' '-increment_interval=${incrementInterval}'"
     echo $cmd
     gcloud compute ssh $clientInstanceName --zone europe-west3-c -- $cmd
     sleep 1800

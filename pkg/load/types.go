@@ -5,10 +5,9 @@ import (
 )
 
 type BenchmarkConfig struct {
-	mode                string
-	traceLength         float64
-	incrementInterval   float64
-	incrementPercentage float64
+	mode              string
+	traceLength       float64
+	incrementInterval float64
 }
 
 type Spanner struct {
