@@ -44,7 +44,7 @@ func (s *Spanner) runVertical() error {
 	sleepInterval := s.config.incrementInterval / float64(traceCounter)
 
 	// Open a new CSV file
-	f, err := os.Create(fmt.Sprintf("benchmark_output/output_%s_benchmark", s.sut))
+	f, err := os.Create(fmt.Sprintf("benchmark_output/output_%s_benchmark.csv", s.sut))
 	if err != nil {
 		return err
 	}
