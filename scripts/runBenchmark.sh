@@ -11,7 +11,7 @@ echo "Mode of scaling: ${mode}"
 echo "Length of Traces: ${traceLength}s"
 echo "Increment interval: ${incrementInterval}s"
 if [ $mode == "vertical" ]; then
-    echo "Increment Percentage: ${incrementPercentage}" 
+    echo "Increment Percentage: ${incrementPercentage}%" 
 fi
 
 if [ $sut == "tempo" ]; then
@@ -74,10 +74,3 @@ else
     exit 1
 fi
 echo "Benchmark is finished."
-
-
-echo "Removing benchmark containers"
-cmd="sudo docker rm -f \$(sudo docker ps -aq)"
-echo $cmd
-gcloud compute ssh $clientInstanceName --zone europe-west3-c -- $cmd
-echo "Done."

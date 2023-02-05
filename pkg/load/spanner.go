@@ -3,6 +3,7 @@ package load
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"time"
 
@@ -32,6 +33,7 @@ func (s *Spanner) runHorizontal() error {
 	traceNumber := 0
 	for {
 		s.createTrace(fmt.Sprintf("%d", traceNumber))
+		log.Println("Trace generated")
 		traceNumber++
 	}
 }
@@ -57,10 +59,11 @@ func (s *Spanner) runVertical() error {
 	for {
 		go s.createTrace(fmt.Sprintf("%d", traceNumber))
 		traceNumber++
-		time.Sleep(time.Duration(interval) * time.Second)
+		time.Sleep(time.Duration(interval * float64(time.Second)))
 		counter += interval
 		if counter >= s.config.incrementInterval {
 			interval = interval * (1 - s.config.incrementPercentage/100)
+			log.Printf("Interval is increased to %.2f\n", interval)
 			counter = 0.0
 			// Write the row
 			if err = writeData(f, []string{time.Now().String(), fmt.Sprintf("%.3f", interval)}); err != nil {
