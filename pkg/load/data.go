@@ -3,7 +3,6 @@ package load
 import (
 	"encoding/csv"
 	"os"
-	"strings"
 )
 
 func writeData(file *os.File, row []string) error {
@@ -28,26 +27,4 @@ func writeHeader(file *os.File, header []string) error {
 	}
 
 	return nil
-}
-
-// Returns the name of the container this file is running
-func getContainerName() (*string, error) {
-	// Read the contents of the /proc/self/cgroup file
-	contents, err := os.ReadFile("/proc/self/cgroup")
-	if err != nil {
-		return nil, err
-	}
-
-	// Split the contents into lines
-	lines := strings.Split(string(contents), "\n")
-
-	// Extract the first line that starts with "name="
-	var name string
-	for _, line := range lines {
-		if strings.HasPrefix(line, "name=") {
-			name = strings.TrimPrefix(line, "name=")
-			break
-		}
-	}
-	return &name, nil
 }

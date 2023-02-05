@@ -8,6 +8,7 @@ type BenchmarkConfig struct {
 	mode              string
 	traceLength       float64
 	incrementInterval float64
+	name              string
 }
 
 type Spanner struct {
