@@ -41,6 +41,7 @@ func (s *Spanner) runHorizontal() error {
 func (s *Spanner) runVertical() error {
 	traceNumber := 0
 	traceCounter := 1
+	sleepInterval := s.config.incrementInterval / float64(traceCounter)
 
 	// Open a new CSV file
 	f, err := os.Create(fmt.Sprintf("benchmark_output/output_%s_benchmark", s.sut))
@@ -57,14 +58,15 @@ func (s *Spanner) runVertical() error {
 	for {
 		for i := 1; i <= traceCounter; i++ {
 			go s.createTrace(fmt.Sprintf("%d", traceNumber))
+			time.Sleep(time.Duration(sleepInterval * float64(time.Second)))
 			traceNumber++
 		}
-		time.Sleep(time.Duration(s.config.incrementInterval * float64(time.Second)))
-		traceCounter++
 		if err = writeData(f, []string{time.Now().String(), fmt.Sprintf("%d", traceCounter)}); err != nil {
 			return err
 		}
-		log.Printf("Traces sent parallel: %d\n", traceCounter)
+		log.Printf("Traces sent during the interval: %d\n", traceCounter)
+		traceCounter++
+		sleepInterval = s.config.incrementInterval / float64(traceCounter)
 	}
 }
 
