@@ -2,24 +2,13 @@
 sut=$1
 traceLength=$2
 incrementInterval=$3
+workers=$4
 
-sudo docker run --rm \
+for i in {1..$workers}; do
+  sudo docker run --rm \
     --net bridge \
     -d \
     -v $PWD/benchmark_output:/app/benchmark_output \
-    --name benchmark_1 \
-    benchmark:latest -sut=${sut} -mode=vertical -trace_length=${traceLength} -increment_interval=${incrementInterval} -container_name=benchmark_1
-
-sudo docker run --rm \
-    --net bridge \
-    -d \
-    -v $PWD/benchmark_output:/app/benchmark_output \
-    --name benchmark_2 \
-    benchmark:latest -sut=${sut} -mode=vertical -trace_length=${traceLength} -increment_interval=${incrementInterval} -container_name=benchmark_2
-
-sudo docker run --rm \
-    --net bridge \
-    -d \
-    -v $PWD/benchmark_output:/app/benchmark_output \
-    --name benchmark_3 \
-    benchmark:latest -sut=${sut} -mode=vertical -trace_length=${traceLength} -increment_interval=${incrementInterval} -container_name=benchmark_3
+    --name benchmark_${i} \
+    benchmark:latest -sut=${sut} -mode=vertical -trace_length=${traceLength} -increment_interval=${incrementInterval} -container_name=benchmark_${i}
+done

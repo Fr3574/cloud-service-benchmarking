@@ -4,11 +4,15 @@ sut=$1
 mode=$2
 traceLength=$3
 incrementInterval=$4
+workers=$5
 
 echo "SUT: ${sut}"
 echo "Mode of scaling: ${mode}"
 echo "Length of Traces: ${traceLength}s"
 echo "Increment interval: ${incrementInterval}s"
+if [ $mode == "vertical" ]; then
+    echo "Amount of workers: ${workers}"
+fi
 
 if [ $sut == "tempo" ]; then
     database="gcs"
@@ -56,7 +60,7 @@ if [ $mode == "horizontal" ]; then
     gcloud compute ssh $clientInstanceName --zone europe-west3-c -- $cmd
 elif [ $mode == "vertical" ]; then
     echo "Starting benchmark container"
-    cmd="bash /cloud-service-benchmarking/scripts/runVerticalBenchmark.sh ${sut} ${traceLength} ${incrementInterval}"
+    cmd="bash /cloud-service-benchmarking/scripts/runVerticalBenchmark.sh ${sut} ${traceLength} ${incrementInterval} ${workers}"
     echo $cmd
     gcloud compute ssh $clientInstanceName --zone europe-west3-c -- $cmd
     echo "Running the benchmark for 30min"
