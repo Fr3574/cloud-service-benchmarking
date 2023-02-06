@@ -4,7 +4,7 @@ traceLength=$2
 incrementInterval=$3
 workers=$4
 
-for i in {1..$workers}; do
+for i in $(seq 1 $workers); do
   sudo docker run --rm \
     --net bridge \
     -d \
