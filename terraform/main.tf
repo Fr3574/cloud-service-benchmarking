@@ -26,7 +26,7 @@ resource "google_compute_firewall" "allow_traffic" {
 # Create three VMs
 resource "google_compute_instance" "client" {
   name         = "client"
-  machine_type = "e2-standard-4"
+  machine_type = "e2-standard-8"
   boot_disk {
     initialize_params {
 	  size = 40
