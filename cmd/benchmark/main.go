@@ -13,9 +13,9 @@ import (
 func main() {
 	// Define the flags
 	sut := flag.String("sut", "tempo", "Defines the SUT (Jaeger or Tempo)")
-	mode := flag.String("mode", "horizontal", "")
+	mode := flag.String("mode", "horizontal", "Defines the benchmarking mode (horizontal or vertical)")
 	traceLength := flag.Float64("trace_length", 1.0, "Defines the length of a trace in seconds")
-	incrementInterval := flag.Float64("increment_interval", 1.0, "")
+	incrementInterval := flag.Float64("increment_interval", 1.0, "Defines the interval to increase the load")
 	name := flag.String("container_name", "benchmark", "The name of the container")
 	flag.Parse()
 

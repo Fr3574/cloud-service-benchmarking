@@ -22,13 +22,31 @@ systemctl start docker
 # Restart docker (don't ask me why this works)
 systemctl restart docker
 
-# Get sample config 
-curl -O https://raw.githubusercontent.com/grafana/tempo/main/example/docker-compose/gcs/tempo-gcs.yaml
+# Create tempo config file
+echo "server:
+  http_listen_port: 3200
+distributor:
+  receivers:
+    otlp:
+      protocols:
+        grpc: 
+ingester:
+  max_block_duration: 30s               # cut the headblock when this much time passes.
+storage:
+  trace:
+    backend: gcs                       # backend configuration to use
+    wal:
+      path: /tmp/tempo/wal             # where to store the the wal locally
+    gcs:
+      bucket_name: tempo
+      endpoint: https://gcs:4443/storage/v1/
+      insecure: true" > tempo-config.yaml
+
 echo "Start Grafana tempo ..."
 docker run --restart on-failure \
     --net bridge \
     -d \
-    -v $PWD/tempo-gcs.yaml:/etc/tempo.yaml \
+    -v $PWD/tempo-config.yaml:/etc/tempo.yaml \
     -v $PWD/tempo-data:/tmp/tempo \
     -p 3200:3200 \
     -p 4317:4317 \

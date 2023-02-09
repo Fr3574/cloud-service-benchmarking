@@ -10,7 +10,7 @@ provider "google" {
 
 # Allow traffic between VMs
 resource "google_compute_firewall" "allow_traffic" {
-  name = "allow-traffic"
+  name    = "allow-traffic"
   network = "default"
 
   allow {
@@ -26,10 +26,10 @@ resource "google_compute_firewall" "allow_traffic" {
 # Create three VMs
 resource "google_compute_instance" "client" {
   name         = "client"
-  machine_type = "e2-standard-8"
+  machine_type = "e2-standard-16"
   boot_disk {
     initialize_params {
-	  size = 40
+      size  = 40
       image = "ubuntu-2204-jammy-v20221101a"
     }
   }
@@ -50,7 +50,7 @@ resource "google_compute_instance" "sut" {
   machine_type = "e2-standard-2"
   boot_disk {
     initialize_params {
-	  size = 40
+      size  = 40
       image = "ubuntu-2204-jammy-v20221101a"
     }
   }
@@ -67,11 +67,11 @@ resource "google_compute_instance" "sut" {
 }
 
 resource "google_compute_instance" "database" {
-  name = var.sut == "jaeger" ? "elasticsearch" : "gcs"
+  name         = var.sut == "jaeger" ? "elasticsearch" : "gcs"
   machine_type = "e2-standard-4"
   boot_disk {
     initialize_params {
-	  size = 40
+      size  = 40
       image = "ubuntu-2204-jammy-v20221101a"
     }
   }

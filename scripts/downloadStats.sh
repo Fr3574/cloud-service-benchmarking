@@ -17,7 +17,7 @@ if [ $mode == "horizontal" ]; then
     gcloud compute scp $clientInstanceName:~/output/output_${sut}_benchmark.csv ${results_dir}/output_${sut}_benchmark.csv --zone europe-west3-c
 else
     for i in $(seq 1 $workers); do
-        gcloud compute scp $clientInstanceName:benchmark_output/output_${sut}_benchmark_${i}.csv ${results_dir}/output_${sut}_benchmark_{i}.csv --zone europe-west3-c
+        gcloud compute scp $clientInstanceName:benchmark_output/output_${sut}_benchmark_${i}.csv ${results_dir}/output_${sut}_benchmark_${i}.csv --zone europe-west3-c
     done
 fi
 echo "Done."
